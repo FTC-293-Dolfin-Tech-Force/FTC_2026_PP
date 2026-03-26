@@ -1,0 +1,6 @@
+[submodule "TeamCode/java/org/firstinspires/ftc/teamcode/dtf_base_libraries"]
+	path = TeamCode/java/org/firstinspires/ftc/teamcode/dtf_base_libraries
+	url = https://github.com/FTC-293-Dolfin-Tech-Force/dtf_base_libraries.git
+[submodule "TeamCode/src/main/java/org/firstinspires/ftc/teamcode/dtf_base_libraries"]
+	path = TeamCode/src/main/java/org/firstinspires/ftc/teamcode/dtf_base_libraries
+	url = https://github.com/FTC-293-Dolfin-Tech-Force/dtf_base_libraries.git
