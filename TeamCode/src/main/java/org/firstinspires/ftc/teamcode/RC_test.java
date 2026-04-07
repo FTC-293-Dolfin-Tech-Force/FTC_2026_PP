@@ -26,7 +26,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.dtf_base_libraries.GoBildaPinpointDriver;
-import org.firstinspires.ftc.teamcode.dtf_base_libraries.Localizer;
 import org.firstinspires.ftc.teamcode.dtf_base_libraries.MecanumRobotController;
 import org.firstinspires.ftc.teamcode.dtf_base_libraries.PinpointLocalizer;
 
