@@ -66,9 +66,9 @@ public class RC_test extends LinearOpMode {
         dt = 0.02;
         double[] dimensions = {0.15, 0.19125, 0.052}; //length, width, wheel radius, in meters
 
-        PinpointLocalizer localizer = new PinpointLocalizer(hardwareMap, new VectorF(0, 0, 0), new VectorF(0, 0, 0), 118, 126, GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD, new GoBildaPinpointDriver.EncoderDirection[]{GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED});
+        PinpointLocalizer localizer = new PinpointLocalizer(hardwareMap, runtime, new VectorF(0, 0, 0), new VectorF(0, 0, 0), 118, 126, GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD, new GoBildaPinpointDriver.EncoderDirection[]{GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED});
 
-        MecanumRobotController robot = new MecanumRobotController(hardwareMap, motorNames, reverseList, PIDList, dt, dimensions, localizer);
+        MecanumRobotController robot = new MecanumRobotController(hardwareMap, runtime, motorNames, reverseList, PIDList, dt, dimensions, localizer);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -90,7 +90,7 @@ public class RC_test extends LinearOpMode {
                 //robot.motors[i].setVelocity(2.5, AngleUnit.RADIANS);
                 telemetry.addData("velocity rad/s, power /100", "%4.1f, %4.2f, %4.3f", (float)i, robot.getMotor(i).getVelocity(AngleUnit.RADIANS), robot.getMotor(i).getPower());
             }
-            robot.getLocalizer().updatePos();
+            robot.getLocalizer().updatePose();
             telemetry.addData("x", "%4.3f", robot.getLocalizer().getPose().get(0));
             telemetry.addData("y", "%4.3f", robot.getLocalizer().getPose().get(1));
             telemetry.addData("pp heading", "%4.3f", robot.getLocalizer().getPose().get(2));

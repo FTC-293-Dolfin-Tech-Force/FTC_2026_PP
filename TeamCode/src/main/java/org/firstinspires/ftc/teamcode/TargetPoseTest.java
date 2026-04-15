@@ -66,24 +66,26 @@ public class TargetPoseTest extends LinearOpMode {
         dt = 0.02;
         double[] dimensions = {0.15, 0.19125, 0.052}; //length, width, wheel radius, in meters
 
-        PinpointLocalizer localizer = new PinpointLocalizer(hardwareMap, new VectorF(0, 0, 0), new VectorF(0, 0, 0), 118, 126, GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD, new GoBildaPinpointDriver.EncoderDirection[]{GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD});
+        PinpointLocalizer localizer = new PinpointLocalizer(hardwareMap, runtime, new VectorF(0, 0, 0), new VectorF(0, 0, 0), 118, 126, GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD, new GoBildaPinpointDriver.EncoderDirection[]{GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED});
 
-        MecanumRobotController robot = new MecanumRobotController(hardwareMap, motorNames, reverseList, PIDList, dt, dimensions, localizer);
+        MecanumRobotController robot = new MecanumRobotController(hardwareMap, runtime, motorNames, reverseList, PIDList, dt, dimensions, localizer);
 
         double xt = 0, yt = 0, ht = 0;
         double x = 0, y = 0, h = 0;
         telemetry.addData("Status", "Initialized");
         telemetry.update();
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        resetRuntime();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
 
-            xt += -2*gamepad1.left_stick_y;
-            yt += 2*gamepad1.left_stick_x;
-            ht += -0.01*gamepad1.right_stick_x;
+            xt += -0.02*gamepad1.left_stick_y;
+            yt += 0.03*gamepad1.left_stick_x;
+            ht += -0.02*gamepad1.right_stick_x;
 
             telemetry.addData("Target Position", "%4.3f, %4.3f, %4.3f", xt, yt, ht);
             VectorF targetPose = new VectorF((float)xt, (float)yt, (float) ht);
@@ -91,9 +93,7 @@ public class TargetPoseTest extends LinearOpMode {
                 double error = targetPose.subtracted(robot.getLocalizer().getPose()).magnitude();
                 telemetry.addData("error", "%4.3f", error);
 
-                VectorF targetVel = new VectorF((float)(xt-x), (float)(yt-y), (float)(ht-h));
-                targetVel.multiply((float) 0.001);
-                robot.setTargetVelocity(targetVel);
+                robot.setTargetPosition(targetPose, runtime.seconds());
             }
             else{
                 robot.setTargetVelocity(new VectorF(0, 0, 0));
@@ -105,7 +105,7 @@ public class TargetPoseTest extends LinearOpMode {
                 //robot.motors[i].setVelocity(2.5, AngleUnit.RADIANS);
                 telemetry.addData("velocity rad/s, power /100", "%4.1f, %4.2f, %4.3f", (float)i, robot.getMotor(i).getVelocity(AngleUnit.RADIANS), robot.getMotor(i).getPower());
             }
-            robot.getLocalizer().updatePos();
+            robot.getLocalizer().updatePose();
             x = robot.getLocalizer().getPose().get(0);
             y = robot.getLocalizer().getPose().get(1);
             h = robot.getLocalizer().getPose().get(2);
