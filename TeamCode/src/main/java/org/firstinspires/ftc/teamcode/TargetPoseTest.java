@@ -72,6 +72,7 @@ public class TargetPoseTest extends LinearOpMode {
 
         double xt = 0, yt = 0, ht = 0;
         double x = 0, y = 0, h = 0;
+        float kPval = (float) 0.105, kIval = (float) 0.0036, kDval = (float) 0.037;
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -83,9 +84,9 @@ public class TargetPoseTest extends LinearOpMode {
         while (opModeIsActive()) {
             telemetry.addData("Status", "Running");
 
-            xt += -0.02*gamepad1.left_stick_y;
-            yt += 0.03*gamepad1.left_stick_x;
-            ht += -0.02*gamepad1.right_stick_x;
+            xt += -0.08*gamepad1.left_stick_y;
+            yt += -0.08*gamepad1.left_stick_x;
+            ht += -0.08*gamepad1.right_stick_x;
 
             telemetry.addData("Target Position", "%4.3f, %4.3f, %4.3f", xt, yt, ht);
             VectorF targetPose = new VectorF((float)xt, (float)yt, (float) ht);
@@ -98,13 +99,45 @@ public class TargetPoseTest extends LinearOpMode {
             else{
                 robot.setTargetVelocity(new VectorF(0, 0, 0));
             }
+            if(gamepad1.x){
+                kPval+=0.01;
+                robot.setkP(kPval);
+            }
+            if(gamepad1.dpad_left){
+                kPval-=0.01;
+                robot.setkP(kPval);
+            }
+            if(gamepad1.y){
+                kIval+=0.0001;
+                robot.setkI(kIval);
+            }
+            if(gamepad1.dpad_up){
+                kIval-=0.0001;
+                robot.setkI(kIval);
+            }
             if(gamepad1.b){
-                xt = x; yt = y; ht = h;
+                kDval+=0.001;
+                robot.setkD(kDval);
+            }
+            if(gamepad1.dpad_right){
+                kDval-=0.001;
+                robot.setkD(kDval);
+            }
+            if(gamepad1.left_trigger>0.5){
+                xt=0.6;
+            }
+            if(gamepad1.right_trigger>0.5){
+                xt=-0.6;
             }
             for(int i = 0; i < 4; i++){
-                //robot.motors[i].setVelocity(2.5, AngleUnit.RADIANS);
+                if(robot.motors[i].getPower()>0.75){
+                    for(int j = 0; j < 4; j++){
+                        robot.motors[j].setPower(robot.motors[j].getPower()*0.75/robot.motors[i].getPower());
+                    }
+                }
                 telemetry.addData("velocity rad/s, power /100", "%4.1f, %4.2f, %4.3f", (float)i, robot.getMotor(i).getVelocity(AngleUnit.RADIANS), robot.getMotor(i).getPower());
             }
+            telemetry.addData("kP, kI, kD", "%4.3f, %4.5f, %4.4f", kPval, kIval, kDval);
             robot.getLocalizer().updatePose();
             x = robot.getLocalizer().getPose().get(0);
             y = robot.getLocalizer().getPose().get(1);
